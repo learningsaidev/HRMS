@@ -1,0 +1,255 @@
+<div class="time-leave-container">
+  <div class="header-section">
+    <div>
+      <h2>Time, Attendance & Leave Management</h2>
+      <p class="subtitle">Biometric punches, shift schedules, immutable leave ledgers, and payroll cutoff freezes</p>
+    </div>
+    <div class="actions">
+      <span class="badge" [class.badge-success]="punchStatus === 'IN'" [class.badge-secondary]="punchStatus === 'OUT'">
+        Current State: {{ punchStatus === 'IN' ? 'CLOCKED IN' : 'CLOCKED OUT' }}
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert" [class.alert-success]="messageType === 'success'" [class.alert-danger]="messageType === 'error'">
+    <i class="bi bi-info-circle"></i> {{ message }}
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tab-nav">
+    <button [class.active]="activeTab === 'attendance'" (click)="activeTab = 'attendance'">
+      <i class="bi bi-fingerprint"></i> Attendance & Punches
+    </button>
+    <button [class.active]="activeTab === 'leaves'" (click)="activeTab = 'leaves'">
+      <i class="bi bi-calendar2-check"></i> Leave Balances & Apply
+    </button>
+    <button [class.active]="activeTab === 'approvals'" (click)="activeTab = 'approvals'">
+      <i class="bi bi-check2-circle"></i> Team Approvals ({{ pendingApprovals.length }})
+    </button>
+    <button [class.active]="activeTab === 'lock'" (click)="activeTab = 'lock'">
+      <i class="bi bi-lock"></i> Monthly Payroll Cutoff
+    </button>
+  </div>
+
+  <!-- TAB 1: Attendance & Punches -->
+  <div *ngIf="activeTab === 'attendance'" class="tab-content">
+    <div class="grid-2">
+      <div class="card punch-card">
+        <h3>Web Biometric / Geo Punch</h3>
+        <p class="text-muted">Simulate biometric hardware punch or mobile geofence clocking.</p>
+        
+        <div class="clock-display">
+          <div class="time-now">{{ lastPunchTime }}</div>
+          <div class="status-indicator">
+            <span class="dot" [class.active]="punchStatus === 'IN'"></span>
+            {{ punchStatus === 'IN' ? 'Logged In Since Last Punch' : 'Currently Outside Geofence' }}
+          </div>
+        </div>
+
+        <div class="punch-actions">
+          <button class="btn btn-success btn-lg" [disabled]="punchStatus === 'IN' || loading" (click)="recordPunch('IN')">
+            <i class="bi bi-box-arrow-in-right"></i> CLOCK IN (09:00 AM)
+          </button>
+          <button class="btn btn-danger btn-lg" [disabled]="punchStatus === 'OUT' || loading" (click)="recordPunch('OUT')">
+            <i class="bi bi-box-arrow-right"></i> CLOCK OUT (18:00 PM)
+          </button>
+        </div>
+        <p class="footnote"><i class="bi bi-shield-check"></i> Encrypted SHA-256 punch event emitted to Kafka topic: <code>hrms.timeleave.punches</code></p>
+      </div>
+
+      <div class="card">
+        <h3>Recent Punch Audit Logs</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Timestamp</th>
+              <th>Location / Device</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of recentPunches">
+              <td>
+                <span class="badge" [class.badge-success]="p.type === 'IN'" [class.badge-secondary]="p.type === 'OUT'">
+                  {{ p.type }}
+                </span>
+              </td>
+              <td>{{ p.time }}</td>
+              <td>{{ p.location }}</td>
+              <td><span class="badge badge-success">{{ p.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Leave Balances & Apply -->
+  <div *ngIf="activeTab === 'leaves'" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Immutable Leave Ledger Balances</h3>
+        <p class="text-muted">Balances computed via strict double-entry ledger transactions.</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Leave Type</th>
+              <th>Opening</th>
+              <th>Accrued</th>
+              <th>Consumed</th>
+              <th>Available</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of leaveBalances">
+              <td><strong>{{ b.leaveType }}</strong></td>
+              <td>{{ b.openingBalance }}</td>
+              <td>+{{ b.accrued }}</td>
+              <td>-{{ b.consumed }}</td>
+              <td class="text-success font-bold"><strong>{{ b.closingBalance }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Submit Leave Application</h3>
+        <form (ngSubmit)="submitLeaveApplication()">
+          <div class="form-group">
+            <label>Leave Category</label>
+            <select [(ngModel)]="newLeave.leaveType" name="leaveType" class="form-control" required>
+              <option value="PRIVILEGE_LEAVE">Privilege / Earned Leave (PL)</option>
+              <option value="CASUAL_LEAVE">Casual Leave (CL)</option>
+              <option value="SICK_LEAVE">Sick Leave (SL)</option>
+              <option value="COMPENSATORY_OFF">Compensatory Off (Comp-Off)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label>Start Date</label>
+              <input type="date" [(ngModel)]="newLeave.startDate" name="startDate" class="form-control" required>
+            </div>
+            <div class="form-group col-6">
+              <label>End Date</label>
+              <input type="date" [(ngModel)]="newLeave.endDate" name="endDate" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Total Business Days</label>
+            <input type="number" [(ngModel)]="newLeave.daysCount" name="daysCount" class="form-control" required min="1">
+          </div>
+          <div class="form-group">
+            <label>Reason / Business Handover Notes</label>
+            <textarea [(ngModel)]="newLeave.reason" name="reason" rows="3" class="form-control" placeholder="Specify reason..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" [disabled]="loading">
+            <i class="bi bi-send"></i> Submit for Manager Approval
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Team Approvals -->
+  <div *ngIf="activeTab === 'approvals'" class="tab-content">
+    <div class="card">
+      <h3>Pending Leave Approvals for Your Direct Reports</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Type</th>
+            <th>Dates</th>
+            <th>Days</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let app of pendingApprovals">
+            <td><strong>{{ app.employeeName }}</strong></td>
+            <td><span class="badge badge-info">{{ app.leaveType }}</span></td>
+            <td>{{ app.startDate }} to {{ app.endDate }}</td>
+            <td><strong>{{ app.daysCount }} days</strong></td>
+            <td>{{ app.reason }}</td>
+            <td>
+              <span class="badge" 
+                    [class.badge-warning]="app.status === 'PENDING'"
+                    [class.badge-success]="app.status === 'APPROVED'"
+                    [class.badge-danger]="app.status === 'REJECTED'">
+                {{ app.status }}
+              </span>
+            </td>
+            <td>
+              <div class="btn-group" *ngIf="app.status === 'PENDING'">
+                <button class="btn btn-sm btn-success" (click)="approveLeave(app)" [disabled]="loading">
+                  <i class="bi bi-check"></i> Approve
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="rejectLeave(app)" [disabled]="loading">
+                  <i class="bi bi-x"></i> Reject
+                </button>
+              </div>
+              <span *ngIf="app.status !== 'PENDING'" class="text-muted">Processed</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 4: Monthly Payroll Cutoff -->
+  <div *ngIf="activeTab === 'lock'" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Lock Monthly Attendance for Payroll Cutoff</h3>
+        <p class="text-muted">Once locked, biometric punches and leaves for this period are frozen and cannot be modified.</p>
+        <form (ngSubmit)="lockAttendance()">
+          <div class="form-group">
+            <label>Pay Period Year & Month</label>
+            <div class="form-row">
+              <input type="number" [(ngModel)]="lockForm.payPeriodYear" name="year" class="form-control col-6" placeholder="Year (e.g. 2026)">
+              <input type="number" [(ngModel)]="lockForm.payPeriodMonth" name="month" class="form-control col-6" placeholder="Month (1-12)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Locked By Authority</label>
+            <input type="text" [(ngModel)]="lockForm.lockedBy" name="lockedBy" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Audit Memo</label>
+            <textarea [(ngModel)]="lockForm.notes" name="notes" class="form-control" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-danger btn-block" [disabled]="loading">
+            <i class="bi bi-lock-fill"></i> Execute Immutable Attendance Lock
+          </button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Historical Locked Periods</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Pay Group</th>
+              <th>Locked Timestamp</th>
+              <th>Locked By</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let lock of lockedPeriods">
+              <td><strong>{{ lock.period }}</strong></td>
+              <td>{{ lock.payGroup }}</td>
+              <td>{{ lock.lockedAt | date:'short' }}</td>
+              <td>{{ lock.lockedBy }}</td>
+              <td><span class="badge badge-secondary">{{ lock.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

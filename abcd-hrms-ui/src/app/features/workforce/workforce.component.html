@@ -1,0 +1,40 @@
+<div class="workforce-page">
+  <div class="page-header">
+    <div>
+      <h1>Workforce Directory &amp; Organization Tree</h1>
+      <p class="subtitle">Global employee master data with AES-256 field encryption and auto-numbering</p>
+    </div>
+    <button class="btn btn-primary">+ Add New Employee</button>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Type</th>
+            <th>Hire Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emp of employees">
+            <td><strong class="money">{{ emp.employeeNumber }}</strong></td>
+            <td><strong>{{ emp.name }}</strong></td>
+            <td>{{ emp.workEmail }}</td>
+            <td>{{ emp.department }}</td>
+            <td>{{ emp.designation }}</td>
+            <td><span class="badge badge-info">{{ emp.employmentType }}</span></td>
+            <td>{{ emp.hireDate }}</td>
+            <td><span class="badge badge-success">{{ emp.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

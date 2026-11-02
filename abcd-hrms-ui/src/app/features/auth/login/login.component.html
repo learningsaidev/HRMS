@@ -1,0 +1,38 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="brand-badge">ABCD</div>
+      <h1>Enterprise HRMS Platform</h1>
+      <p>Human Capital, Statutory Compliance &amp; Double-Entry Payroll</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label>Select Role (Demo Persona)</label>
+        <div class="persona-chips">
+          <button type="button" class="chip" [class.selected]="selectedRole === 'SUPER_ADMIN'" (click)="onRoleChange('SUPER_ADMIN')">👑 Super Admin</button>
+          <button type="button" class="chip" [class.selected]="selectedRole === 'HR_ADMIN'" (click)="onRoleChange('HR_ADMIN')">👥 HR Admin</button>
+          <button type="button" class="chip" [class.selected]="selectedRole === 'PAYROLL_OFFICER'" (click)="onRoleChange('PAYROLL_OFFICER')">💰 Payroll Lead</button>
+          <button type="button" class="chip" [class.selected]="selectedRole === 'FINANCE_CONTROLLER'" (click)="onRoleChange('FINANCE_CONTROLLER')">🏛️ Finance Lead</button>
+          <button type="button" class="chip" [class.selected]="selectedRole === 'EMPLOYEE'" (click)="onRoleChange('EMPLOYEE')">👤 Employee</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Corporate Email</label>
+        <input id="email" type="email" [(ngModel)]="email" name="email" required class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" value="Password@123" class="form-control" />
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Sign In with Enterprise SSO</button>
+    </form>
+
+    <div class="login-footer">
+      <span class="secure-badge">🔒 AES-256 GCM Field Encryption &amp; Kafka Transactional Outbox Protected</span>
+    </div>
+  </div>
+</div>

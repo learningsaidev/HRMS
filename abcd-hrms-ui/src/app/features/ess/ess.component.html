@@ -1,0 +1,132 @@
+<div class="ess-page">
+  <div class="page-header">
+    <div>
+      <h1>Employee Self-Service (ESS) Portal</h1>
+      <p class="subtitle">Access payslips, punch attendance, manage leaves, and view tax declarations</p>
+    </div>
+
+    <!-- Quick Clock Action -->
+    <div class="clock-action-container">
+      <button class="btn" [ngClass]="isClockedIn ? 'btn-danger' : 'btn-success'" (click)="toggleClock()">
+        <span *ngIf="!isClockedIn">🟢 Clock In (09:00 AM Shift)</span>
+        <span *ngIf="isClockedIn">🔴 Clock Out for the Day</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="tab-nav">
+    <button class="tab-btn" [class.active]="activeTab === 'payslips'" (click)="activeTab = 'payslips'">📄 My Payslips</button>
+    <button class="tab-btn" [class.active]="activeTab === 'attendance'" (click)="activeTab = 'attendance'">⏱️ Attendance Punches</button>
+    <button class="tab-btn" [class.active]="activeTab === 'leaves'" (click)="activeTab = 'leaves'">🏖️ Leave Balances</button>
+    <button class="tab-btn" [class.active]="activeTab === 'tax'" (click)="activeTab = 'tax'">📑 Tax &amp; Loans</button>
+  </div>
+
+  <!-- Tab 1: Payslips -->
+  <div class="tab-content" *ngIf="activeTab === 'payslips'">
+    <div *ngFor="let slip of payslips" class="card payslip-card">
+      <div class="payslip-header">
+        <div>
+          <h3>{{ slip.period }} Payslip</h3>
+          <span class="badge badge-success">{{ slip.paymentStatus }}</span>
+        </div>
+        <div class="payslip-summary-box">
+          <span class="label">Net Pay Disbursed</span>
+          <span class="value money">₹{{ slip.netPay | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="payslip-breakdown">
+        <div class="breakdown-column">
+          <h4>Earnings (+)</h4>
+          <table class="data-table">
+            <tbody>
+              <tr *ngFor="let earn of slip.earnings">
+                <td>{{ earn.name }}</td>
+                <td class="money text-right">₹{{ earn.amount | number:'1.2-2' }}</td>
+              </tr>
+              <tr class="total-row">
+                <td><strong>Gross Earnings</strong></td>
+                <td class="money text-right"><strong>₹{{ slip.grossEarnings | number:'1.2-2' }}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="breakdown-column">
+          <h4>Deductions &amp; Statutory (-)</h4>
+          <table class="data-table">
+            <tbody>
+              <tr *ngFor="let ded of slip.deductions">
+                <td>{{ ded.name }}</td>
+                <td class="money text-right">₹{{ ded.amount | number:'1.2-2' }}</td>
+              </tr>
+              <tr class="total-row">
+                <td><strong>Total Deductions</strong></td>
+                <td class="money text-right text-danger"><strong>₹{{ slip.totalDeductions | number:'1.2-2' }}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="payslip-footer">
+        <div class="attendance-stat">
+          Days in Month: <strong>{{ slip.daysInMonth }}</strong> | Paid Days: <strong>{{ slip.paidDays }}</strong> | LOP: <strong>{{ slip.lopDays }}</strong>
+        </div>
+        <button class="btn btn-primary btn-sm" (click)="downloadPayslip(slip)">📥 Download PDF Payslip</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Attendance -->
+  <div class="tab-content" *ngIf="activeTab === 'attendance'">
+    <div class="card">
+      <h3>Recent Geo-fenced Punches</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Coordinates</th>
+            <th>Compliance Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let punch of punches">
+            <td><span class="badge badge-info">{{ punch.type }}</span></td>
+            <td>{{ punch.date }}</td>
+            <td class="money">{{ punch.time }}</td>
+            <td>12.9716° N, 77.5946° E (Bengaluru HQ)</td>
+            <td><span class="badge badge-success">{{ punch.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Leaves -->
+  <div class="tab-content" *ngIf="activeTab === 'leaves'">
+    <div class="leave-grid">
+      <div *ngFor="let l of leaves" class="card leave-card">
+        <h3>{{ l.type }}</h3>
+        <div class="leave-stats">
+          <div class="stat"><span class="num">{{ l.allocated }}</span><span class="lbl">Annual</span></div>
+          <div class="stat"><span class="num">{{ l.consumed }}</span><span class="lbl">Consumed</span></div>
+          <div class="stat available"><span class="num text-success">{{ l.available }}</span><span class="lbl">Available</span></div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-block">Apply for {{ l.type }}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Tax -->
+  <div class="tab-content" *ngIf="activeTab === 'tax'">
+    <div class="card">
+      <h3>Income Tax Declarations (FY 2026-2027)</h3>
+      <p class="subtitle" style="margin-bottom: 20px;">Active Regime: <span class="badge badge-success">New Simplified Tax Regime</span> (Standard ₹75,000 deduction automatically applied)</p>
+      <button class="btn btn-secondary">Switch to Old Regime (80C / 80D / HRA Proof Submission)</button>
+    </div>
+  </div>
+</div>

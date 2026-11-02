@@ -1,0 +1,256 @@
+<div class="onboarding-container">
+  <div class="header-section">
+    <div>
+      <h2>Candidate Preboarding & Background Verification (BGV)</h2>
+      <p class="subtitle">Consent acquisition, digital document vault, automated BGV verification, and Day-1 conversion</p>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" (click)="activeTab = 'new-candidate'">
+        <i class="bi bi-person-plus-fill"></i> Invite New Candidate
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert" [class.alert-success]="messageType === 'success'" [class.alert-danger]="messageType === 'error'">
+    <i class="bi bi-info-circle"></i> {{ message }}
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tab-nav">
+    <button [class.active]="activeTab === 'pipeline'" (click)="activeTab = 'pipeline'">
+      <i class="bi bi-kanban"></i> Preboarding Pipeline ({{ cases.length }})
+    </button>
+    <button [class.active]="activeTab === 'new-candidate'" (click)="activeTab = 'new-candidate'">
+      <i class="bi bi-envelope-plus"></i> Invite Candidate
+    </button>
+    <button [class.active]="activeTab === 'bgv-console'" (click)="activeTab = 'bgv-console'" [disabled]="!selectedCase">
+      <i class="bi bi-shield-check"></i> BGV Review Console {{ selectedCase ? '(' + selectedCase.candidateName + ')' : '' }}
+    </button>
+  </div>
+
+  <!-- TAB 1: Preboarding Pipeline -->
+  <div *ngIf="activeTab === 'pipeline'" class="tab-content">
+    <div class="card">
+      <div class="card-header-bar">
+        <h3>Active Candidates in Onboarding</h3>
+        <span class="text-muted">Total: {{ cases.length }} candidates</span>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Candidate Name</th>
+            <th>Role & Department</th>
+            <th>Target Joining Date</th>
+            <th>Preboarding Status</th>
+            <th>BGV Verification</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of cases">
+            <td>
+              <strong>{{ c.candidateName }}</strong><br>
+              <small class="text-muted">{{ c.email }} | {{ c.mobileNumber }}</small>
+            </td>
+            <td>
+              <div>{{ c.designation }}</div>
+              <small class="text-muted">{{ c.department }}</small>
+            </td>
+            <td><strong>{{ c.targetJoiningDate }}</strong></td>
+            <td>
+              <span class="badge"
+                    [class.badge-secondary]="c.status === 'INVITED'"
+                    [class.badge-info]="c.status === 'CONSENT_GRANTED' || c.status === 'DOCS_UPLOADED'"
+                    [class.badge-warning]="c.status === 'BGV_IN_PROGRESS'"
+                    [class.badge-success]="c.status === 'BGV_CLEAR'"
+                    [class.badge-primary]="c.status === 'CONVERTED'">
+                {{ c.status }}
+              </span>
+            </td>
+            <td>
+              <span class="badge"
+                    [class.badge-secondary]="c.bgvStatus === 'NOT_STARTED'"
+                    [class.badge-warning]="c.bgvStatus === 'IN_PROGRESS'"
+                    [class.badge-success]="c.bgvStatus === 'CLEARED'"
+                    [class.badge-danger]="c.bgvStatus === 'FLAGGED'">
+                {{ c.bgvStatus }}
+              </span>
+            </td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-outline-primary" (click)="openBgvConsole(c)">
+                  <i class="bi bi-search"></i> Inspect BGV
+                </button>
+                <button *ngIf="c.bgvStatus === 'NOT_STARTED'" class="btn btn-sm btn-warning" (click)="triggerBgvInitiation(c)">
+                  <i class="bi bi-play-fill"></i> Initiate BGV
+                </button>
+                <button *ngIf="c.status === 'BGV_CLEAR'" class="btn btn-sm btn-success" (click)="convertToEmployee(c)">
+                  <i class="bi bi-person-check-fill"></i> Convert to Employee
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: Invite New Candidate -->
+  <div *ngIf="activeTab === 'new-candidate'" class="tab-content">
+    <div class="card form-card">
+      <h3>Initiate Preboarding Invitation</h3>
+      <p class="text-muted">Dispatches magic link to candidate to digitally consent to BGV, upload KYC documents, and complete personal profile.</p>
+
+      <form (ngSubmit)="createCandidate()">
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label>First Name</label>
+            <input type="text" [(ngModel)]="candidateForm.firstName" name="firstName" class="form-control" required>
+          </div>
+          <div class="form-group col-6">
+            <label>Last Name</label>
+            <input type="text" [(ngModel)]="candidateForm.lastName" name="lastName" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label>Email Address</label>
+            <input type="email" [(ngModel)]="candidateForm.email" name="email" class="form-control" required>
+          </div>
+          <div class="form-group col-6">
+            <label>Mobile Number</label>
+            <input type="text" [(ngModel)]="candidateForm.mobileNumber" name="mobileNumber" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label>Department</label>
+            <select [(ngModel)]="candidateForm.department" name="department" class="form-control" required>
+              <option value="Software Engineering">Software Engineering</option>
+              <option value="Product Management">Product Management</option>
+              <option value="Finance & Tax">Finance & Tax</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Operations & Legal">Operations & Legal</option>
+            </select>
+          </div>
+          <div class="form-group col-6">
+            <label>Designation</label>
+            <input type="text" [(ngModel)]="candidateForm.designation" name="designation" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label>Target Joining Date</label>
+            <input type="date" [(ngModel)]="candidateForm.targetJoiningDate" name="targetJoiningDate" class="form-control" required>
+          </div>
+          <div class="form-group col-6">
+            <label>Offered Annual CTC (INR)</label>
+            <input type="number" [(ngModel)]="candidateForm.offeredCtc" name="offeredCtc" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button type="submit" class="btn btn-primary btn-lg" [disabled]="loading">
+            <i class="bi bi-send-fill"></i> Dispatch Preboarding Invitation & Consent Token
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TAB 3: BGV Review Console -->
+  <div *ngIf="activeTab === 'bgv-console' && selectedCase" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Background Verification Dossier</h3>
+        <p class="text-muted">Auditable checks for <strong>{{ selectedCase.candidateName }}</strong></p>
+
+        <div class="candidate-meta">
+          <div class="meta-item"><span>Email:</span> <strong>{{ selectedCase.email }}</strong></div>
+          <div class="meta-item"><span>Target Role:</span> <strong>{{ selectedCase.designation }}</strong></div>
+          <div class="meta-item"><span>Joining Date:</span> <strong>{{ selectedCase.targetJoiningDate }}</strong></div>
+          <div class="meta-item"><span>Current BGV Status:</span> <span class="badge badge-warning">{{ selectedCase.bgvStatus }}</span></div>
+        </div>
+
+        <h4 class="mt-4">Statutory & Verification Checks</h4>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Verification Category</th>
+              <th>Status</th>
+              <th>Findings / Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let check of bgvChecks">
+              <td><strong>{{ check.name }}</strong></td>
+              <td>
+                <span class="badge" [class.badge-success]="check.status === 'VERIFIED'" [class.badge-warning]="check.status === 'IN_PROGRESS'">
+                  {{ check.status }}
+                </span>
+              </td>
+              <td><small>{{ check.remarks }}</small></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="mt-4 bgv-decision-box">
+          <h4>HR / Compliance Final Decision</h4>
+          <p class="text-muted">Confirming BGV clearance emits an event to <code>hrms.bgv.events</code> for Day-1 IT provisioning.</p>
+          <div class="btn-group">
+            <button class="btn btn-success" (click)="markBgvClear()" [disabled]="loading">
+              <i class="bi bi-shield-check"></i> Sign Off & Mark BGV CLEARED
+            </button>
+            <button class="btn btn-outline-danger" [disabled]="loading">
+              <i class="bi bi-flag-fill"></i> Flag Discrepancy
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Candidate Document Vault</h3>
+        <p class="text-muted">AES-256 encrypted documents uploaded via secure preboarding portal.</p>
+
+        <ul class="doc-list">
+          <li class="doc-item">
+            <div class="doc-icon"><i class="bi bi-file-earmark-pdf-fill text-danger"></i></div>
+            <div class="doc-info">
+              <div class="doc-name">PAN_Card_Verification.pdf</div>
+              <small class="text-muted">Uploaded on 2026-11-01 • Verified with NSDL database</small>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i></button>
+          </li>
+          <li class="doc-item">
+            <div class="doc-icon"><i class="bi bi-file-earmark-pdf-fill text-danger"></i></div>
+            <div class="doc-info">
+              <div class="doc-name">Aadhaar_Card_Masked.pdf</div>
+              <small class="text-muted">Uploaded on 2026-11-01 • First 8 digits masked per UIDAI rules</small>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i></button>
+          </li>
+          <li class="doc-item">
+            <div class="doc-icon"><i class="bi bi-file-earmark-pdf-fill text-danger"></i></div>
+            <div class="doc-info">
+              <div class="doc-name">Degree_Certificate_IITM.pdf</div>
+              <small class="text-muted">Uploaded on 2026-11-01 • NAD Verified</small>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i></button>
+          </li>
+          <li class="doc-item">
+            <div class="doc-icon"><i class="bi bi-file-earmark-pdf-fill text-danger"></i></div>
+            <div class="doc-info">
+              <div class="doc-name">Relieving_Experience_Letter_PrevEmployer.pdf</div>
+              <small class="text-muted">Uploaded on 2026-11-01 • Under agency verification</small>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i></button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

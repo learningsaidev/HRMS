@@ -97,8 +97,63 @@ export class ApiService {
     return this.http.get<ApiResponse<any>>(`${this.URLS.reporting}/dashboard/executive?period=${period}`);
   }
 
-  // Onboarding API
+  // Onboarding & BGV API
   getOnboardingCases(): Observable<ApiResponse<any[]>> {
     return this.http.get<ApiResponse<any[]>>(`${this.URLS.onboarding}/onboarding/cases`);
+  }
+
+  createOnboardingCase(candidate: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.onboarding}/onboarding/cases`, candidate);
+  }
+
+  initiateBgv(onboardingCaseId: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.onboarding}/bgv/initiate/${onboardingCaseId}`, {});
+  }
+
+  reviewBgv(bgvCaseId: string, review: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.onboarding}/bgv/cases/${bgvCaseId}/review`, review);
+  }
+
+  // Time & Leave Extended
+  applyLeave(application: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.timeLeave}/leaves/apply`, application);
+  }
+
+  approveLeave(applicationId: string, approverId?: string): Observable<ApiResponse<any>> {
+    const url = approverId ? `${this.URLS.timeLeave}/leaves/${applicationId}/approve?approverId=${approverId}` : `${this.URLS.timeLeave}/leaves/${applicationId}/approve`;
+    return this.http.patch<ApiResponse<any>>(url, {});
+  }
+
+  lockAttendancePeriod(req: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.timeLeave}/attendance/lock`, req);
+  }
+
+  getAttendanceSummary(employeeId: string, year: number, month: number): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.URLS.timeLeave}/attendance/summary/${employeeId}?year=${year}&month=${month}`);
+  }
+
+  // Tax & Benefits API
+  getTaxDeclarations(financialYear: string = '2026-2027'): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${this.URLS.tax}/declarations?financialYear=${financialYear}`);
+  }
+
+  submitTaxDeclaration(declaration: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.tax}/declarations`, declaration);
+  }
+
+  verifyTaxItem(declarationId: string, verification: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.tax}/declarations/${declarationId}/verify`, verification);
+  }
+
+  getLoansForEmployee(employeeId: string): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${this.URLS.tax}/loans/employee/${employeeId}`);
+  }
+
+  applyLoan(loanRequest: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.tax}/loans`, loanRequest);
+  }
+
+  disburseLoan(loanId: string, req: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.URLS.tax}/loans/${loanId}/disburse`, req);
   }
 }

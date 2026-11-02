@@ -1,0 +1,22 @@
+.workforce-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--neutral-900);
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--neutral-500);
+  }
+}

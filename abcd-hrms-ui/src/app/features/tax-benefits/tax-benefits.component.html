@@ -1,0 +1,277 @@
+<div class="tax-benefits-container">
+  <div class="header-section">
+    <div>
+      <h2>Taxation, Declarations & Benefits Engine</h2>
+      <p class="subtitle">Old vs New Tax Regime optimization, Chapter VI-A proof auditing, and reducing-balance loan amortization</p>
+    </div>
+    <div class="actions">
+      <span class="badge badge-info">FY {{ financialYear }} (AY 2027-2028)</span>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert" [class.alert-success]="messageType === 'success'" [class.alert-danger]="messageType === 'error'">
+    <i class="bi bi-info-circle"></i> {{ message }}
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tab-nav">
+    <button [class.active]="activeTab === 'regime'" (click)="activeTab = 'regime'">
+      <i class="bi bi-calculator"></i> Regime Comparison & Simulator
+    </button>
+    <button [class.active]="activeTab === 'declarations'" (click)="activeTab = 'declarations'">
+      <i class="bi bi-file-earmark-check"></i> 80C / 80D / HRA Proof Audit
+    </button>
+    <button [class.active]="activeTab === 'loans'" (click)="activeTab = 'loans'">
+      <i class="bi bi-bank"></i> Company Loans & EMI Amortization
+    </button>
+  </div>
+
+  <!-- TAB 1: Regime Comparison & Simulator -->
+  <div *ngIf="activeTab === 'regime'" class="tab-content">
+    <div class="card simulator-card">
+      <div class="simulator-input-row">
+        <label>Simulate Annual Taxable CTC (INR):</label>
+        <input type="number" [(ngModel)]="annualGrossIncome" (ngModelChange)="computeComparison()" class="form-control income-input">
+        <button class="btn btn-secondary" (click)="annualGrossIncome = 1500000; computeComparison()">15 LPA</button>
+        <button class="btn btn-secondary" (click)="annualGrossIncome = 2400000; computeComparison()">24 LPA</button>
+        <button class="btn btn-secondary" (click)="annualGrossIncome = 3600000; computeComparison()">36 LPA</button>
+      </div>
+    </div>
+
+    <div class="regime-grid">
+      <!-- New Regime Card -->
+      <div class="card regime-card" [class.selected]="selectedRegime === 'NEW'">
+        <div class="regime-badge-header">
+          <span class="regime-title">New Tax Regime (Sec 115BAC)</span>
+          <span class="badge badge-success">Default per Indian Budget</span>
+        </div>
+        <p class="text-muted">Simplified slab structure with enhanced standard deduction and zero exemption paperwork.</p>
+        
+        <div class="calc-row">
+          <span>Gross Annual Income:</span>
+          <strong>₹ {{ comparison.grossIncome.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row">
+          <span>Standard Deduction:</span>
+          <strong class="text-success">- ₹ {{ comparison.newRegime.standardDeduction.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row total">
+          <span>Net Taxable Income:</span>
+          <strong>₹ {{ comparison.newRegime.taxableIncome.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row highlight">
+          <span>Total Annual Tax Liability:</span>
+          <strong class="text-danger">₹ {{ comparison.newRegime.annualTax.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row">
+          <span>Estimated Monthly TDS:</span>
+          <strong>₹ {{ comparison.newRegime.monthlyTds.toLocaleString() }} / mo</strong>
+        </div>
+        <div class="calc-row">
+          <span>Effective Tax Rate:</span>
+          <strong>{{ comparison.newRegime.effectiveRate }}</strong>
+        </div>
+
+        <button class="btn btn-primary btn-block mt-3" (click)="selectedRegime = 'NEW'; saveRegimePreference()">
+          <i class="bi bi-check-circle-fill"></i> Select New Regime
+        </button>
+      </div>
+
+      <!-- Old Regime Card -->
+      <div class="card regime-card" [class.selected]="selectedRegime === 'OLD'">
+        <div class="regime-badge-header">
+          <span class="regime-title">Old Tax Regime</span>
+          <span class="badge badge-secondary">Exemptions & Deductions</span>
+        </div>
+        <p class="text-muted">Utilize Chapter VI-A deductions (80C, 80D), Metro HRA exemptions, and home loan interest.</p>
+        
+        <div class="calc-row">
+          <span>Gross Annual Income:</span>
+          <strong>₹ {{ comparison.grossIncome.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row">
+          <span>Standard Deduction:</span>
+          <strong class="text-success">- ₹ {{ comparison.oldRegime.standardDeduction.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row">
+          <span>80C / 80D / NPS Deductions:</span>
+          <strong class="text-success">- ₹ {{ comparison.oldRegime.chapterVIADeductions.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row">
+          <span>HRA Rent Exemption:</span>
+          <strong class="text-success">- ₹ {{ comparison.oldRegime.hraExemption.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row total">
+          <span>Net Taxable Income:</span>
+          <strong>₹ {{ comparison.oldRegime.taxableIncome.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row highlight">
+          <span>Total Annual Tax Liability:</span>
+          <strong class="text-danger">₹ {{ comparison.oldRegime.annualTax.toLocaleString() }}</strong>
+        </div>
+        <div class="calc-row">
+          <span>Estimated Monthly TDS:</span>
+          <strong>₹ {{ comparison.oldRegime.monthlyTds.toLocaleString() }} / mo</strong>
+        </div>
+        <div class="calc-row">
+          <span>Effective Tax Rate:</span>
+          <strong>{{ comparison.oldRegime.effectiveRate }}</strong>
+        </div>
+
+        <button class="btn btn-outline-primary btn-block mt-3" (click)="selectedRegime = 'OLD'; saveRegimePreference()">
+          <i class="bi bi-check-circle"></i> Select Old Regime
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Declarations & Proof Audit -->
+  <div *ngIf="activeTab === 'declarations'" class="tab-content">
+    <div class="card">
+      <div class="card-header-bar">
+        <div>
+          <h3>Investment & Exemption Proof Audit Console</h3>
+          <p class="text-muted">Audit and approve employee proofs. Approved amounts directly reduce monthly TDS in <code>payroll-service</code>.</p>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Section & Category</th>
+            <th>Declared Amount</th>
+            <th>Audited Amount</th>
+            <th>Max Statutory Limit</th>
+            <th>Proof Document</th>
+            <th>Audit Status</th>
+            <th>Review Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of declarations">
+            <td>
+              <strong>{{ item.section }}</strong><br>
+              <small class="text-muted">{{ item.category }}</small>
+            </td>
+            <td>₹ {{ item.declaredAmount.toLocaleString() }}</td>
+            <td class="font-bold text-primary">₹ {{ item.verifiedAmount.toLocaleString() }}</td>
+            <td>₹ {{ item.maxLimit.toLocaleString() }}</td>
+            <td>
+              <span *ngIf="item.proofDocument" class="badge badge-info">
+                <i class="bi bi-paperclip"></i> {{ item.proofDocument }}
+              </span>
+              <span *ngIf="!item.proofDocument" class="text-muted">No proof uploaded</span>
+            </td>
+            <td>
+              <span class="badge"
+                    [class.badge-success]="item.status === 'VERIFIED'"
+                    [class.badge-warning]="item.status === 'PENDING_PROOF'"
+                    [class.badge-danger]="item.status === 'REJECTED'">
+                {{ item.status }}
+              </span>
+            </td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-success" (click)="verifyItem(item, true)">
+                  <i class="bi bi-check"></i> Approve
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="verifyItem(item, false)">
+                  <i class="bi bi-x"></i> Reject
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: Company Loans & Amortization -->
+  <div *ngIf="activeTab === 'loans'" class="tab-content">
+    <div class="grid-2">
+      <!-- Loan Simulator & Application -->
+      <div class="card">
+        <h3>Reducing-Balance Loan Simulator</h3>
+        <p class="text-muted">Company assistance loans with monthly payroll deduction schedule.</p>
+
+        <form (ngSubmit)="submitLoanApplication()">
+          <div class="form-group">
+            <label>Loan Purpose / Category</label>
+            <select [(ngModel)]="loanForm.loanType" name="loanType" class="form-control" required>
+              <option value="EMERGENCY_MEDICAL">Emergency Medical Assistance</option>
+              <option value="HIGHER_EDUCATION">Higher Education / Upskilling Grant</option>
+              <option value="RELOCATION_ADVANCE">Relocation Advance Loan</option>
+              <option value="HARDWARE_PURCHASE">Workstation Hardware Assistance</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label>Principal Amount (INR)</label>
+              <input type="number" [(ngModel)]="loanForm.principalAmount" (ngModelChange)="calculateAmortization()" name="principalAmount" class="form-control" required min="10000" step="10000">
+            </div>
+            <div class="form-group col-6">
+              <label>Tenure (Months)</label>
+              <input type="number" [(ngModel)]="loanForm.tenureMonths" (ngModelChange)="calculateAmortization()" name="tenureMonths" class="form-control" required min="3" max="36">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Annual Interest Rate (% per annum)</label>
+            <input type="number" [(ngModel)]="loanForm.annualInterestRate" (ngModelChange)="calculateAmortization()" name="annualInterestRate" class="form-control" step="0.1" required>
+          </div>
+
+          <div class="loan-summary-box">
+            <div class="summary-line">
+              <span>Calculated Monthly EMI:</span>
+              <strong class="text-primary font-lg">₹ {{ calculatedEmi.toLocaleString() }}</strong>
+            </div>
+            <div class="summary-line">
+              <span>Total Interest Over Tenure:</span>
+              <strong>₹ {{ totalInterest.toLocaleString() }}</strong>
+            </div>
+            <div class="summary-line">
+              <span>Total Repayable:</span>
+              <strong>₹ {{ (loanForm.principalAmount + totalInterest).toLocaleString() }}</strong>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block mt-3" [disabled]="loading">
+            <i class="bi bi-send-check"></i> Submit for Sanction & Disbursement
+          </button>
+        </form>
+      </div>
+
+      <!-- Amortization Schedule -->
+      <div class="card">
+        <h3>Amortization Schedule (Reducing Balance)</h3>
+        <p class="text-muted">EMI automatically deducted from payslips during monthly payroll calculation.</p>
+
+        <div class="table-scroll">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Due Month</th>
+                <th>Principal</th>
+                <th>Interest</th>
+                <th>Total EMI</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of amortizationSchedule">
+                <td><strong>{{ s.installmentNumber }}</strong></td>
+                <td>{{ s.dueDate }}</td>
+                <td>₹ {{ s.principalAmount.toLocaleString() }}</td>
+                <td>₹ {{ s.interestAmount.toLocaleString() }}</td>
+                <td><strong>₹ {{ s.totalEmi.toLocaleString() }}</strong></td>
+                <td>₹ {{ s.remainingPrincipal.toLocaleString() }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

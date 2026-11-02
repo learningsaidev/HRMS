@@ -1,0 +1,93 @@
+<div class="dashboard-page" *ngIf="metrics">
+  <div class="page-header">
+    <div>
+      <h1>Executive Human Capital &amp; Treasury Dashboard</h1>
+      <p class="subtitle">Real-time enterprise metrics, Double-Entry Payroll rollups, and headcount KPIs</p>
+    </div>
+    <div class="period-pill">Period: <strong>November 2026</strong></div>
+  </div>
+
+  <!-- KPI Summary Cards -->
+  <div class="kpi-grid">
+    <div class="card kpi-card">
+      <div class="kpi-icon icon-headcount">👥</div>
+      <div class="kpi-content">
+        <span class="kpi-label">Active Headcount</span>
+        <h3 class="kpi-value">{{ metrics.activeHeadcount }}</h3>
+        <span class="kpi-subtext text-success">↑ 12 hires this month</span>
+      </div>
+    </div>
+
+    <div class="card kpi-card">
+      <div class="kpi-icon icon-payroll">💰</div>
+      <div class="kpi-content">
+        <span class="kpi-label">Monthly Payroll Spend</span>
+        <h3 class="kpi-value money">₹{{ metrics.monthlyPayrollExpenditure | number:'1.0-0' }}</h3>
+        <span class="kpi-subtext text-neutral">Banker's Rounding (4 Decimals)</span>
+      </div>
+    </div>
+
+    <div class="card kpi-card">
+      <div class="kpi-icon icon-salary">📈</div>
+      <div class="kpi-content">
+        <span class="kpi-label">Average Monthly CTC</span>
+        <h3 class="kpi-value money">₹{{ metrics.averageSalary | number:'1.0-0' }}</h3>
+        <span class="kpi-subtext text-success">Market competitive</span>
+      </div>
+    </div>
+
+    <div class="card kpi-card">
+      <div class="kpi-icon icon-leave">🏖️</div>
+      <div class="kpi-content">
+        <span class="kpi-label">Leave Utilization</span>
+        <h3 class="kpi-value">{{ metrics.leaveUtilizationRate }}%</h3>
+        <span class="kpi-subtext text-warning">Healthy compliance</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Departmental Analytics & Recent Activity -->
+  <div class="analytics-grid">
+    <div class="card analytics-card">
+      <h3>Headcount &amp; Cost by Department</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Department</th>
+              <th>Headcount</th>
+              <th>Total Cost (INR)</th>
+              <th>Budget Share</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of metrics.headcountByDepartment | keyvalue">
+              <td><strong>{{ item.key }}</strong></td>
+              <td>{{ item.value }}</td>
+              <td class="money">₹{{ metrics.payrollCostByDepartment[item.key] | number:'1.0-0' }}</td>
+              <td>
+                <div class="progress-bar-container">
+                  <div class="progress-bar" [style.width.%]="(item.value / metrics.activeHeadcount) * 100"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card activity-card">
+      <h3>Audit &amp; System Event Log (Splunk Streamed)</h3>
+      <div class="activity-feed">
+        <div class="activity-item" *ngFor="let act of metrics.recentActivities">
+          <div class="activity-dot"></div>
+          <div class="activity-details">
+            <span class="activity-title badge badge-info">{{ act.eventType }}</span>
+            <p class="activity-desc">{{ act.description }}</p>
+            <span class="activity-time">{{ act.timestamp }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

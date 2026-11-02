@@ -1,0 +1,313 @@
+.tax-benefits-container {
+  padding: 1.5rem;
+
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h2 {
+      margin: 0;
+      color: #1a202c;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.25rem 0 0 0;
+      color: #718096;
+      font-size: 0.875rem;
+    }
+  }
+
+  .tab-nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+
+    button {
+      background: none;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #4a5568;
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #edf2f7;
+        color: #2b6cb0;
+      }
+
+      &.active {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border-bottom: 2px solid #3182ce;
+      }
+    }
+  }
+
+  .simulator-card {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem;
+
+    .simulator-input-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+
+      label {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      .income-input {
+        width: 200px;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .regime-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .regime-card {
+    border: 2px solid #e2e8f0;
+    transition: all 0.2s;
+
+    &.selected {
+      border-color: #3182ce;
+      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.15);
+    }
+
+    .regime-badge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+
+      .regime-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a202c;
+      }
+    }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed #edf2f7;
+      font-size: 0.9rem;
+
+      &.total {
+        border-top: 1px solid #cbd5e0;
+        border-bottom: 1px solid #cbd5e0;
+        font-weight: 600;
+        padding: 0.75rem 0;
+        margin: 0.5rem 0;
+      }
+
+      &.highlight {
+        background: #f7fafc;
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin: 0.5rem 0;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      margin-top: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .table-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #edf2f7;
+      font-size: 0.875rem;
+    }
+
+    th {
+      background: #f7fafc;
+      font-weight: 600;
+      color: #4a5568;
+    }
+  }
+
+  .loan-summary-box {
+    background: #ebf8ff;
+    border: 1px solid #bee3f8;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      font-size: 0.9rem;
+
+      .font-lg {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: 0.875rem;
+
+      &:focus {
+        outline: none;
+        border-color: #3182ce;
+        box-shadow: 0 0 0 1px #3182ce;
+      }
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+
+    .col-6 {
+      flex: 1;
+    }
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+
+    &-primary {
+      background: #3182ce;
+      color: #fff;
+      &:hover { background: #2b6cb0; }
+    }
+
+    &-secondary {
+      background: #edf2f7;
+      color: #4a5568;
+      &:hover { background: #e2e8f0; }
+    }
+
+    &-success {
+      background: #38a169;
+      color: #fff;
+      &:hover { background: #2f855a; }
+    }
+
+    &-outline-primary {
+      background: transparent;
+      border: 1px solid #3182ce;
+      color: #3182ce;
+      &:hover { background: #ebf8ff; }
+    }
+
+    &-outline-danger {
+      background: transparent;
+      border: 1px solid #e53e3e;
+      color: #e53e3e;
+      &:hover { background: #fff5f5; }
+    }
+
+    &-block {
+      width: 100%;
+    }
+
+    &-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  .badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    &-success { background: #c6f6d5; color: #22543d; }
+    &-warning { background: #feebc8; color: #7b341e; }
+    &-danger { background: #fed7d7; color: #742a2a; }
+    &-secondary { background: #edf2f7; color: #4a5568; }
+    &-info { background: #e2e8f0; color: #2b6cb0; }
+  }
+
+  .alert {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+
+    &-success { background: #c6f6d5; color: #22543d; }
+    &-danger { background: #fed7d7; color: #742a2a; }
+  }
+}

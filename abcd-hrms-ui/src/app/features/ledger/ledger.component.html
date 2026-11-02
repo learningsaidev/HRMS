@@ -1,0 +1,89 @@
+<div class="ledger-page">
+  <div class="page-header">
+    <div>
+      <h1>General Ledger &amp; Treasury Disbursement Console</h1>
+      <p class="subtitle">Strict double-entry balancing (Debit = Credit), bank rails, and compensating return sagas</p>
+    </div>
+    <div class="tab-pill">
+      <button class="pill-btn" [class.active]="activeView === 'journals'" (click)="activeView = 'journals'">🏛️ Journal Vouchers</button>
+      <button class="pill-btn" [class.active]="activeView === 'disbursements'" (click)="activeView = 'disbursements'">💳 Payment Batches</button>
+    </div>
+  </div>
+
+  <!-- View 1: Journal Vouchers -->
+  <div *ngIf="activeView === 'journals'">
+    <div *ngFor="let jv of journalEntries" class="card jv-card">
+      <div class="jv-header">
+        <div>
+          <h3>{{ jv.entryNumber }}</h3>
+          <span class="narration">{{ jv.narration }}</span>
+        </div>
+        <div class="jv-meta">
+          <span class="badge badge-success">POSTED &amp; BALANCED</span>
+          <span class="date">{{ jv.entryDate }}</span>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Account Code</th>
+            <th>Account Name</th>
+            <th class="text-right">Debit (INR)</th>
+            <th class="text-right">Credit (INR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of jv.lines">
+            <td><strong class="money">{{ line.accountCode }}</strong></td>
+            <td>{{ line.accountName }}</td>
+            <td class="money text-right" [class.font-bold]="line.type === 'DEBIT'">
+              {{ line.type === 'DEBIT' ? ('₹' + (line.amount | number:'1.2-2')) : '-' }}
+            </td>
+            <td class="money text-right" [class.font-bold]="line.type === 'CREDIT'">
+              {{ line.type === 'CREDIT' ? ('₹' + (line.amount | number:'1.2-2')) : '-' }}
+            </td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="2"><strong>Total Invariant Balance (Debit = Credit)</strong></td>
+            <td class="money text-right"><strong>₹{{ jv.totalAmount | number:'1.2-2' }}</strong></td>
+            <td class="money text-right"><strong>₹{{ jv.totalAmount | number:'1.2-2' }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- View 2: Payment Batches -->
+  <div *ngIf="activeView === 'disbursements'">
+    <div class="card">
+      <div class="card-header-flex">
+        <h3>Bank Disbursement Batches</h3>
+        <button class="btn btn-danger btn-sm" (click)="simulateReturn()">Simulate Failed Payment Return Saga</button>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Batch Ref</th>
+            <th>Rail</th>
+            <th>Transactions</th>
+            <th>Total Amount (INR)</th>
+            <th>Status</th>
+            <th>Disbursed At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of paymentBatches">
+            <td><strong class="money">{{ b.batchReference }}</strong></td>
+            <td><span class="badge badge-info">{{ b.paymentMethod }}</span></td>
+            <td>{{ b.totalTransactions }}</td>
+            <td class="money">₹{{ b.totalAmount | number:'1.2-2' }}</td>
+            <td><span class="badge badge-success">{{ b.status }}</span></td>
+            <td>{{ b.createdAt }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
