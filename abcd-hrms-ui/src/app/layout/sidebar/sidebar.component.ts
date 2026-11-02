@@ -9,3 +9,4 @@ import { AuthService } from '../../core/services/auth.service';
 export class SidebarComponent {
   constructor(public authService: AuthService) {}
 }
+

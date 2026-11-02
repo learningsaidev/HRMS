@@ -1,0 +1,4 @@
+node_modules/
+abcd-hrms-ui/node_modules/
+# Ignore all target folders everywhere in the project
+target/

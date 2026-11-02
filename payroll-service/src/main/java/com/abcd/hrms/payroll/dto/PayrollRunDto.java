@@ -1,9 +1,6 @@
 package com.abcd.hrms.payroll.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -13,7 +10,31 @@ import java.util.UUID;
 
 public class PayrollRunDto {
 
-    @Data
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class InitiateRequest {
+        private UUID companyId;
+
+        @NotNull(message = "Legal Entity ID is mandatory")
+        private UUID legalEntityId;
+
+        @NotNull(message = "Pay Group ID is mandatory")
+        private UUID payGroupId;
+
+        @NotNull(message = "Period start date is mandatory")
+        private LocalDate periodStart;
+
+        @NotNull(message = "Period end date is mandatory")
+        private LocalDate periodEnd;
+
+        private String runType;
+    }
+
+    @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -35,21 +56,5 @@ public class PayrollRunDto {
         private UUID approvedBy;
         private Instant lockedAt;
         private Instant createdAt;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class InitiateRequest {
-        private UUID companyId;
-        @NotNull(message = "Legal entity ID is mandatory")
-        private UUID legalEntityId;
-        @NotNull(message = "Pay group ID is mandatory")
-        private UUID payGroupId;
-        @NotNull(message = "Period start is mandatory")
-        private LocalDate periodStart;
-        @NotNull(message = "Period end is mandatory")
-        private LocalDate periodEnd;
-        private String runType = "REGULAR";
     }
 }

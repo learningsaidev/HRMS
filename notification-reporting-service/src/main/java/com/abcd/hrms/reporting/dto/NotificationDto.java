@@ -76,3 +76,4 @@ public class NotificationDto {
         private String actionUrl;
     }
 }
+

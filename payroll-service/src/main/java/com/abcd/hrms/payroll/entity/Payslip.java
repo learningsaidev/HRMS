@@ -59,3 +59,4 @@ public class Payslip extends BaseAuditedEntity {
     @Column(name = "pdf_storage_path", length = 500)
     private String pdfStoragePath;
 }
+

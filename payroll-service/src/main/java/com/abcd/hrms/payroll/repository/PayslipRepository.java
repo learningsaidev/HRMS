@@ -14,3 +14,4 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
     List<Payslip> findByCompanyIdAndEmployeeIdOrderByCreatedAtDesc(UUID companyId, UUID employeeId);
     Optional<Payslip> findByPayrollRunIdAndEmployeeId(UUID payrollRunId, UUID employeeId);
 }
+

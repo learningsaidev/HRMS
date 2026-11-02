@@ -14,3 +14,4 @@ public interface TaxRegimeRepository extends JpaRepository<TaxRegime, UUID> {
     List<TaxRegime> findByFinancialYear(String financialYear);
     Optional<TaxRegime> findByFinancialYearAndIsDefaultTrue(String financialYear);
 }
+

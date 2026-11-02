@@ -2,6 +2,8 @@
 -- ABCD Time, Attendance & Leave Service - Schema Migration V1
 -- ==============================================================================
 
+CREATE SCHEMA IF NOT EXISTS abcd_time_leave;
+
 CREATE TABLE IF NOT EXISTS shift (
     id UUID PRIMARY KEY,
     company_id UUID NOT NULL,

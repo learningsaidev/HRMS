@@ -2,6 +2,8 @@
 -- ABCD Onboarding & Background Verification Service - Schema Migration V1
 -- ==============================================================================
 
+CREATE SCHEMA IF NOT EXISTS abcd_onboarding;
+
 CREATE TABLE IF NOT EXISTS onboarding_case (
     id UUID PRIMARY KEY,
     company_id UUID NOT NULL,

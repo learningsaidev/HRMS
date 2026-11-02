@@ -52,3 +52,4 @@ public class PaymentBatch extends BaseAuditedEntity {
     @Builder.Default
     private String status = "PENDING"; // PENDING, APPROVED, PROCESSING, COMPLETED, PARTIALLY_FAILED
 }
+

@@ -21,3 +21,4 @@ public class BgvReviewRequest {
 
     private UUID reviewerId;
 }
+

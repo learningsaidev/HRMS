@@ -12,3 +12,4 @@ public interface CandidateDocumentRepository extends JpaRepository<CandidateDocu
 
     List<CandidateDocument> findByOnboardingCaseId(UUID onboardingCaseId);
 }
+

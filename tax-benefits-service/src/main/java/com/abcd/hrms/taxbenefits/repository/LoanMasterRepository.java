@@ -13,3 +13,4 @@ public interface LoanMasterRepository extends JpaRepository<LoanMaster, UUID> {
     List<LoanMaster> findByCompanyIdAndStatus(UUID companyId, String status);
     List<LoanMaster> findByStatus(String status);
 }
+

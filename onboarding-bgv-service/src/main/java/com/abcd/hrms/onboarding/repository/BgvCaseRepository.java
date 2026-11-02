@@ -15,3 +15,4 @@ public interface BgvCaseRepository extends JpaRepository<BgvCase, UUID> {
 
     List<BgvCase> findByStatus(String status);
 }
+

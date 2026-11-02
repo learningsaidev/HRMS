@@ -35,3 +35,4 @@ public class ReportingMetric extends BaseAuditedEntity {
     @Column(name = "dimensions_json", columnDefinition = "TEXT")
     private String dimensionsJson;
 }
+

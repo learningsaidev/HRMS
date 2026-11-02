@@ -38,3 +38,4 @@ public class InAppNotification extends BaseAuditedEntity {
     @Column(name = "read_at")
     private Instant readAt;
 }
+

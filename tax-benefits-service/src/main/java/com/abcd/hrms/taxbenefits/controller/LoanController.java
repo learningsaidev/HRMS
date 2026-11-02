@@ -44,3 +44,4 @@ public class LoanController {
         return ResponseEntity.ok(ApiResponse.ok(loanService.listLoansForEmployee(employeeId, companyId)));
     }
 }
+

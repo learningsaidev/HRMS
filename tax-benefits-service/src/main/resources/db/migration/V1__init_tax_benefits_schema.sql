@@ -1,115 +1,108 @@
--- V1__init_tax_benefits_schema.sql
--- ABCD HRMS Tax Regimes, Declarations, Benefits, and Employee Loans Schema
+-- ==============================================================================
+-- ABCD Tax, Deductions & Benefits Service - Schema Migration V1
+-- ==============================================================================
+
+CREATE SCHEMA IF NOT EXISTS abcd_tax_benefits;
 
 CREATE TABLE IF NOT EXISTS tax_regimes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    regime_code VARCHAR(30) NOT NULL, -- OLD, NEW
-    regime_name VARCHAR(100) NOT NULL,
-    financial_year VARCHAR(20) NOT NULL, -- 2026-2027
-    is_default BOOLEAN NOT NULL DEFAULT FALSE,
-    standard_deduction NUMERIC(18, 4) NOT NULL DEFAULT 50000.0000,
+    id UUID PRIMARY KEY,
+    company_id UUID,
+    employee_id UUID NOT NULL,
+    financial_year VARCHAR(20) NOT NULL,
+    selected_regime VARCHAR(20) NOT NULL, -- NEW, OLD
+    locked BOOLEAN NOT NULL DEFAULT FALSE,
+    locked_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100),
-    updated_by VARCHAR(100),
-    CONSTRAINT uq_regime_fy UNIQUE (regime_code, financial_year)
+    created_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    updated_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    version BIGINT NOT NULL DEFAULT 0,
+    CONSTRAINT uk_employee_fy UNIQUE (employee_id, financial_year)
 );
 
 CREATE TABLE IF NOT EXISTS tax_declarations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company_id UUID NOT NULL,
+    id UUID PRIMARY KEY,
+    company_id UUID,
     employee_id UUID NOT NULL,
     financial_year VARCHAR(20) NOT NULL,
-    regime_code VARCHAR(30) NOT NULL DEFAULT 'NEW',
-    status VARCHAR(30) NOT NULL DEFAULT 'DRAFT', -- DRAFT, SUBMITTED, VERIFIED, REJECTED
-    total_declared_deductions NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
-    total_verified_deductions NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
+    regime VARCHAR(20) NOT NULL,
+    status VARCHAR(30) NOT NULL DEFAULT 'SUBMITTED', -- DRAFT, SUBMITTED, VERIFIED, REJECTED
+    total_declared NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
+    total_verified NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100),
-    updated_by VARCHAR(100),
-    CONSTRAINT uq_emp_tax_decl UNIQUE (company_id, employee_id, financial_year)
+    created_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    updated_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    version BIGINT NOT NULL DEFAULT 0,
+    CONSTRAINT uk_decl_emp_fy UNIQUE (employee_id, financial_year)
 );
 
 CREATE TABLE IF NOT EXISTS declaration_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     declaration_id UUID NOT NULL REFERENCES tax_declarations(id) ON DELETE CASCADE,
-    section_code VARCHAR(50) NOT NULL, -- 80C, 80D, 80E, 24B, HRA
-    description VARCHAR(255),
+    section VARCHAR(50) NOT NULL, -- 80C, 80D, 10(13A), 80CCD, 24(B)
+    category VARCHAR(100) NOT NULL,
     declared_amount NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
     verified_amount NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
-    proof_storage_path VARCHAR(500),
-    verification_status VARCHAR(30) NOT NULL DEFAULT 'PENDING', -- PENDING, APPROVED, REJECTED
-    rejection_reason VARCHAR(500),
+    max_limit NUMERIC(18, 4) NOT NULL DEFAULT 150000.0000,
+    proof_document_url VARCHAR(500),
+    status VARCHAR(30) NOT NULL DEFAULT 'PENDING', -- PENDING, VERIFIED, REJECTED
+    rejection_reason VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100),
-    updated_by VARCHAR(100)
+    created_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    updated_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    version BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS loan_masters (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company_id UUID NOT NULL,
+    id UUID PRIMARY KEY,
+    company_id UUID,
     employee_id UUID NOT NULL,
-    loan_type VARCHAR(50) NOT NULL DEFAULT 'SALARY_ADVANCE', -- SALARY_ADVANCE, HOME_LOAN, PERSONAL_LOAN
-    principal_amount NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
-    interest_rate NUMERIC(7, 4) NOT NULL DEFAULT 0.0000,
-    tenure_months INT NOT NULL DEFAULT 12,
-    monthly_emi NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
-    disbursement_date DATE,
-    status VARCHAR(30) NOT NULL DEFAULT 'PENDING', -- PENDING, APPROVED, ACTIVE, CLOSED, REJECTED
-    total_paid NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
-    balance_principal NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
+    loan_type VARCHAR(50) NOT NULL, -- EMERGENCY_MEDICAL, HIGHER_EDUCATION, RELOCATION_ADVANCE
+    principal_amount NUMERIC(18, 4) NOT NULL,
+    annual_interest_rate NUMERIC(5, 2) NOT NULL DEFAULT 7.50,
+    tenure_months INT NOT NULL,
+    monthly_emi NUMERIC(18, 4) NOT NULL,
+    total_interest NUMERIC(18, 4) NOT NULL,
+    disbursement_date DATE NOT NULL,
+    status VARCHAR(30) NOT NULL DEFAULT 'SANCTIONED', -- APPLIED, SANCTIONED, DISBURSED, CLOSED, DEFAULTED
+    approved_by VARCHAR(100),
+    approved_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100),
-    updated_by VARCHAR(100)
+    created_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    updated_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    version BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS loan_installments (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     loan_id UUID NOT NULL REFERENCES loan_masters(id) ON DELETE CASCADE,
     installment_number INT NOT NULL,
     due_date DATE NOT NULL,
-    emi_amount NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
-    principal_component NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
-    interest_component NUMERIC(18, 4) NOT NULL DEFAULT 0.0000,
-    status VARCHAR(30) NOT NULL DEFAULT 'PENDING', -- PENDING, DEDUCTED, WAIVED
-    payroll_run_id UUID,
+    principal_component NUMERIC(18, 4) NOT NULL,
+    interest_component NUMERIC(18, 4) NOT NULL,
+    total_installment_amount NUMERIC(18, 4) NOT NULL,
+    remaining_principal NUMERIC(18, 4) NOT NULL,
+    status VARCHAR(30) NOT NULL DEFAULT 'PENDING', -- PENDING, DEDUCTED, RECOVERED, WAIVED
+    deducted_payroll_run_id UUID,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100),
-    updated_by VARCHAR(100)
+    created_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    updated_by VARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+    version BIGINT NOT NULL DEFAULT 0
 );
 
--- Transactional Outbox
 CREATE TABLE IF NOT EXISTS outbox_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     aggregate_type VARCHAR(100) NOT NULL,
     aggregate_id VARCHAR(100) NOT NULL,
-    event_type VARCHAR(150) NOT NULL,
-    topic VARCHAR(150) NOT NULL,
+    event_type VARCHAR(100) NOT NULL,
     payload TEXT NOT NULL,
     status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
     retry_count INT NOT NULL DEFAULT 0,
-    error_message TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    processed_at TIMESTAMP WITH TIME ZONE
+    sent_at TIMESTAMP WITH TIME ZONE
 );
 
--- Idempotent Inbox
-CREATE TABLE IF NOT EXISTS inbox_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    event_id VARCHAR(100) NOT NULL,
-    event_type VARCHAR(150) NOT NULL,
-    consumer_group VARCHAR(100) NOT NULL,
-    payload TEXT NOT NULL,
-    processed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(30) NOT NULL DEFAULT 'PROCESSED',
-    CONSTRAINT uq_inbox_tax UNIQUE (event_id, consumer_group)
-);
-
-CREATE INDEX IF NOT EXISTS idx_tax_decl_emp ON tax_declarations(company_id, employee_id, financial_year);
-CREATE INDEX IF NOT EXISTS idx_decl_items_decl ON declaration_items(declaration_id);
-CREATE INDEX IF NOT EXISTS idx_loan_emp ON loan_masters(company_id, employee_id, status);
-CREATE INDEX IF NOT EXISTS idx_loan_inst_due ON loan_installments(loan_id, status, due_date);

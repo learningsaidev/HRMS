@@ -12,3 +12,4 @@ public interface NotificationLogRepository extends JpaRepository<NotificationLog
     List<NotificationLog> findByCompanyIdOrderByCreatedAtDesc(UUID companyId);
     List<NotificationLog> findByRecipientIdOrderByCreatedAtDesc(UUID recipientId);
 }
+

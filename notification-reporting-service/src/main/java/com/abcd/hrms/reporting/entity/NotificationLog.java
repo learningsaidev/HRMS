@@ -48,3 +48,4 @@ public class NotificationLog extends BaseAuditedEntity {
     @Column(name = "sent_at")
     private Instant sentAt;
 }
+

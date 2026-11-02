@@ -25,3 +25,4 @@ public class NotificationReportingServiceApplication {
         SpringApplication.run(NotificationReportingServiceApplication.class, args);
     }
 }
+

@@ -12,3 +12,4 @@ public interface CalculationLineRepository extends JpaRepository<CalculationLine
     List<CalculationLine> findByPayslipId(UUID payslipId);
     void deleteByPayslipId(UUID payslipId);
 }
+

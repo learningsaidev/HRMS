@@ -80,3 +80,4 @@ public class JournalEntryDto {
         private String description;
     }
 }
+

@@ -13,3 +13,4 @@ public interface SalaryComponentRepository extends JpaRepository<SalaryComponent
     Optional<SalaryComponent> findByCompanyIdAndComponentCode(UUID companyId, String componentCode);
     List<SalaryComponent> findByCompanyIdAndIsActiveTrueOrderByDisplayOrderAsc(UUID companyId);
 }
+

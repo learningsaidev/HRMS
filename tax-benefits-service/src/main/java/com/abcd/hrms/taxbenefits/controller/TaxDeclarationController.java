@@ -47,3 +47,4 @@ public class TaxDeclarationController {
         return ResponseEntity.ok(ApiResponse.ok(declarationService.listDeclarations(companyId, financialYear)));
     }
 }
+

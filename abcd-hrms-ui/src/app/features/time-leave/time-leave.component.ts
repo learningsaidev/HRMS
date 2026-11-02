@@ -224,3 +224,4 @@ export class TimeLeaveComponent implements OnInit {
     }, 5000);
   }
 }
+

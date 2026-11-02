@@ -48,3 +48,4 @@ class ExecutiveDashboardServiceTest {
         assertFalse(dto.getRecentActivities().isEmpty());
     }
 }
+

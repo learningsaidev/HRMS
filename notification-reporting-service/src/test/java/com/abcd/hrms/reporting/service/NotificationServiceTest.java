@@ -99,3 +99,4 @@ class NotificationServiceTest {
         assertNotNull(readNotif.getReadAt());
     }
 }
+

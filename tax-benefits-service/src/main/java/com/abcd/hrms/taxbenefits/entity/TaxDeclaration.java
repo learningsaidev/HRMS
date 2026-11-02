@@ -41,3 +41,4 @@ public class TaxDeclaration extends BaseAuditedEntity {
     @Builder.Default
     private BigDecimal totalVerifiedDeductions = BigDecimal.ZERO;
 }
+

@@ -12,3 +12,4 @@ public interface DeclarationItemRepository extends JpaRepository<DeclarationItem
     List<DeclarationItem> findByDeclarationId(UUID declarationId);
     void deleteByDeclarationId(UUID declarationId);
 }
+

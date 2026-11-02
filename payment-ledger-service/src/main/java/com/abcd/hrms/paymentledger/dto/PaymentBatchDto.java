@@ -72,3 +72,4 @@ public class PaymentBatchDto {
         private String returnReason;
     }
 }
+

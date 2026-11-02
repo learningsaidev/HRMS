@@ -30,3 +30,4 @@ public class DocumentUploadRequest {
     @NotBlank(message = "MIME type is mandatory")
     private String mimeType;
 }
+

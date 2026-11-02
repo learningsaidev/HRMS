@@ -125,3 +125,4 @@ class TaxDeclarationServiceTest {
         assertEquals(0, new BigDecimal("150000.0000").compareTo(verified.getTotalVerifiedDeductions()));
     }
 }
+

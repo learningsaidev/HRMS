@@ -2,6 +2,8 @@
 -- ABCD Workforce Service - Schema Migration V1
 -- ==============================================================================
 
+CREATE SCHEMA IF NOT EXISTS abcd_workforce;
+
 CREATE TABLE IF NOT EXISTS company (
     id UUID PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,

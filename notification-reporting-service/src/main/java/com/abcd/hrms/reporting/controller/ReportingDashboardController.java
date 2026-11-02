@@ -23,3 +23,4 @@ public class ReportingDashboardController {
         return ResponseEntity.ok(ApiResponse.ok(dashboardService.getExecutiveDashboard(companyId, period)));
     }
 }
+

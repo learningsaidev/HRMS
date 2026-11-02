@@ -107,7 +107,7 @@ The platform relies on the pre-configured enterprise Docker stack at:
 | **PostgreSQL 16** | `5432` | Username: `postgres` \| Password: `postgres` \| DB: `postgres` |
 | **Apache Kafka** | `9092` | KRaft Mode (Controller on 9093) \| Internal Listener: `kafka:29092` |
 | **Kafka UI** | `8085` | Web management interface: `http://localhost:8085` |
-| **Splunk Enterprise** | `8000` (UI) / `8088` (HEC) | Web: `admin` / `splunk` \| HEC Token: `abcd-enterprise-hec-token-001` |
+| **Splunk Enterprise** | `8000` (UI) / `8088` (HEC) | Web: `admin` / `SplunkAdmin123!` \| HEC Token: `946654e2-6e83-4ae2-943a-a32ffef9305b` |
 
 ---
 
@@ -193,12 +193,14 @@ The UI features a quick-switch **Persona Bar** allowing immediate evaluation of 
 ## 🔍 Splunk Telemetry & Verification
 
 To verify that structured events are reaching Splunk HEC:
-```bash
-curl -k http://localhost:8088/services/collector/health
+```powershell
+curl.exe -X POST http://localhost:8088/services/collector/event `
+  -H "Authorization: Splunk 946654e2-6e83-4ae2-943a-a32ffef9305b" `
+  -d "{\"event\": {\"service\": \"workforce-service\", \"level\": \"INFO\", \"message\": \"Testing Splunk HEC integration from local Docker\"}}"
 ```
-In the Splunk Enterprise UI (`http://localhost:8000`), run the search query:
+In the Splunk Enterprise UI (`http://localhost:8000`, `admin:SplunkAdmin123!`), run the search query:
 ```spl
-index="hrms_logs" | table _time host correlationId serviceName level message
+index="main" | table _time host correlationId serviceName level message
 ```
 You will observe real-time audit logs from all microservices, tagged with `correlationId`, `userId`, `tenantId`, and `serviceName`.
 
@@ -222,3 +224,4 @@ cmd.exe /c "set JAVA_HOME=C:\Program Files\Java\jdk-11&& set PATH=C:\Program Fil
 ## 📜 Compliance & Security Notes
 - **Data Protection**: Sensitive personal information (Aadhaar, PAN, Bank Accounts) is encrypted using AES-256-GCM (`common-security`). First 8 digits of Aadhaar are automatically masked in all UI representations and API logs per UIDAI guidelines.
 - **Tamper-Evident Auditing**: Financial records and journal vouchers are append-only; update and delete operations on finalized payroll and ledger entries are prohibited by domain guards.
+

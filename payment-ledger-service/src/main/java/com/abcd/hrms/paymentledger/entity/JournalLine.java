@@ -32,3 +32,4 @@ public class JournalLine extends BaseAuditedEntity {
     @Column(name = "description", length = 255)
     private String description;
 }
+

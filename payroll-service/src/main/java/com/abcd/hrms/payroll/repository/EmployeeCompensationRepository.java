@@ -14,3 +14,4 @@ public interface EmployeeCompensationRepository extends JpaRepository<EmployeeCo
     List<EmployeeCompensation> findByPayGroupIdAndIsActiveTrue(UUID payGroupId);
     List<EmployeeCompensation> findByCompanyIdAndIsActiveTrue(UUID companyId);
 }
+

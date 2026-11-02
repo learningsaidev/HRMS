@@ -9,9 +9,9 @@ spring:
   profiles:
     active: local
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/abcd_payroll}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:postgres_db}?sslmode=disable}
+    username: ${SPRING_DATASOURCE_USERNAME:${POSTGRES_USER:postgres}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${POSTGRES_PASSWORD:postgres}}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -23,12 +23,17 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        default_schema: abcd_payroll
         format_sql: false
     show-sql: false
   flyway:
     enabled: true
     baseline-on-migrate: true
+    validate-on-migrate: false
     locations: classpath:db/migration
+    schemas: abcd_payroll
+    default-schema: abcd_payroll
+    create-schemas: true
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     producer:
@@ -52,18 +57,12 @@ security:
 splunk:
   hec:
     url: ${SPLUNK_HEC_URL:http://localhost:8088/services/collector/event}
-    token: ${SPLUNK_HEC_TOKEN:abcd-splunk-token-9999}
-    channel: ${SPLUNK_HEC_CHANNEL:payroll-service-channel}
+    token: ${SPLUNK_HEC_TOKEN:946654e2-6e83-4ae2-943a-a32ffef9305b}
+    index: ${SPLUNK_INDEX:main}
+    enabled: ${SPLUNK_ENABLED:true}
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-  metrics:
-    export:
-      prometheus:
-        enabled: true

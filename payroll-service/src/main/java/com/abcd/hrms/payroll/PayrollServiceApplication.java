@@ -5,19 +5,24 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @SpringBootApplication
 @ComponentScan(basePackages = {
-        "com.abcd.hrms.common",
-        "com.abcd.hrms.payroll"
+        "com.abcd.hrms.payroll",
+        "com.abcd.hrms.common.core",
+        "com.abcd.hrms.common.security",
+        "com.abcd.hrms.common.messaging",
+        "com.abcd.hrms.common.observability"
 })
 @EntityScan(basePackages = {
-        "com.abcd.hrms.common",
-        "com.abcd.hrms.payroll.entity"
+        "com.abcd.hrms.payroll.entity",
+        "com.abcd.hrms.common.messaging.outbox"
 })
 @EnableJpaRepositories(basePackages = {
-        "com.abcd.hrms.common",
-        "com.abcd.hrms.payroll.repository"
+        "com.abcd.hrms.payroll.repository",
+        "com.abcd.hrms.common.messaging.outbox"
 })
 public class PayrollServiceApplication {
 
@@ -25,3 +30,4 @@ public class PayrollServiceApplication {
         SpringApplication.run(PayrollServiceApplication.class, args);
     }
 }
+

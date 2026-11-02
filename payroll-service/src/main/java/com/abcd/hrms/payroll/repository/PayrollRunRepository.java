@@ -16,3 +16,4 @@ public interface PayrollRunRepository extends JpaRepository<PayrollRun, UUID> {
     List<PayrollRun> findByLegalEntityIdOrderByPeriodStartDesc(UUID legalEntityId);
     Optional<PayrollRun> findByPayGroupIdAndPeriodStartAndPeriodEnd(UUID payGroupId, LocalDate periodStart, LocalDate periodEnd);
 }
+

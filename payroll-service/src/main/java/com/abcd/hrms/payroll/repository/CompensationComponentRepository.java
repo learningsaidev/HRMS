@@ -12,3 +12,4 @@ public interface CompensationComponentRepository extends JpaRepository<Compensat
     List<CompensationComponent> findByCompensationId(UUID compensationId);
     void deleteByCompensationId(UUID compensationId);
 }
+

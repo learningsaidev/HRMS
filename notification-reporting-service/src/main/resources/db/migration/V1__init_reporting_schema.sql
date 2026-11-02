@@ -1,6 +1,8 @@
 -- V1__init_reporting_schema.sql
 -- ABCD HRMS Notification Engine, Read Models, and Executive Dashboard Schema
 
+CREATE SCHEMA IF NOT EXISTS abcd_notification_reporting;
+
 CREATE TABLE IF NOT EXISTS notification_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company_id UUID NOT NULL,
@@ -78,3 +80,4 @@ CREATE TABLE IF NOT EXISTS inbox_events (
 CREATE INDEX IF NOT EXISTS idx_notif_user ON in_app_notifications(user_id, is_read);
 CREATE INDEX IF NOT EXISTS idx_notif_logs_status ON notification_logs(company_id, status);
 CREATE INDEX IF NOT EXISTS idx_metrics_cat ON reporting_metrics(company_id, metric_category, period);
+

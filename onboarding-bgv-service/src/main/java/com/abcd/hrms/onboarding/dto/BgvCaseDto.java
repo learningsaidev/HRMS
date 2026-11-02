@@ -44,3 +44,4 @@ public class BgvCaseDto {
         private String discrepancyNotes;
     }
 }
+

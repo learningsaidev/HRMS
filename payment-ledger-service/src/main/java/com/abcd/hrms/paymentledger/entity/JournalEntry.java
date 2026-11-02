@@ -50,3 +50,4 @@ public class JournalEntry extends BaseAuditedEntity {
     @Column(name = "posted_at")
     private Instant postedAt;
 }
+

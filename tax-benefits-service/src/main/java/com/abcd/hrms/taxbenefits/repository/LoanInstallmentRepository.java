@@ -14,3 +14,4 @@ public interface LoanInstallmentRepository extends JpaRepository<LoanInstallment
     List<LoanInstallment> findByStatusAndDueDateLessThanEqual(String status, LocalDate maxDueDate);
     void deleteByLoanId(UUID loanId);
 }
+

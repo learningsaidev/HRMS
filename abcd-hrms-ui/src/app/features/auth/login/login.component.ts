@@ -23,3 +23,4 @@ export class LoginComponent {
     this.router.navigate(['/dashboard']);
   }
 }
+

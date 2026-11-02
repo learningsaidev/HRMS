@@ -12,3 +12,4 @@ public interface ConsentRecordRepository extends JpaRepository<ConsentRecord, UU
 
     Optional<ConsentRecord> findByOnboardingCaseId(UUID onboardingCaseId);
 }
+

@@ -3,7 +3,7 @@
 
     <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="abcd-service"/>
     <springProperty scope="context" name="splunkUrl" source="splunk.hec.url" defaultValue="http://localhost:8088/services/collector/event"/>
-    <springProperty scope="context" name="splunkToken" source="splunk.hec.token" defaultValue="00000000-0000-0000-0000-000000000000"/>
+    <springProperty scope="context" name="splunkToken" source="splunk.hec.token" defaultValue="946654e2-6e83-4ae2-943a-a32ffef9305b"/>
     <springProperty scope="context" name="splunkIndex" source="splunk.hec.index" defaultValue="main"/>
     <springProperty scope="context" name="splunkEnabled" source="splunk.hec.enabled" defaultValue="true"/>
 
@@ -34,3 +34,4 @@
     <logger name="org.hibernate" level="INFO"/>
 
 </configuration>
+

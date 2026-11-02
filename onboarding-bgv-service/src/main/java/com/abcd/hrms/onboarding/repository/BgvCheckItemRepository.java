@@ -12,3 +12,4 @@ public interface BgvCheckItemRepository extends JpaRepository<BgvCheckItem, UUID
 
     List<BgvCheckItem> findByBgvCaseId(UUID bgvCaseId);
 }
+

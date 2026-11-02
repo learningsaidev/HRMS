@@ -37,3 +37,4 @@ public class BankReconciliation extends BaseAuditedEntity {
     @Builder.Default
     private String status = "MATCHED"; // MATCHED, UNMATCHED, DISCREPANCY
 }
+

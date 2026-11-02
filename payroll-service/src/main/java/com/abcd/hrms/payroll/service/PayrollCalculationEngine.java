@@ -247,3 +247,4 @@ public class PayrollCalculationEngine {
         return new EmployeeCalculationResult(payslip, lines);
     }
 }
+

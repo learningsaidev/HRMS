@@ -32,3 +32,4 @@ public class TaxRegime extends BaseAuditedEntity {
     @Builder.Default
     private BigDecimal standardDeduction = new BigDecimal("75000.0000");
 }
+

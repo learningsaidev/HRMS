@@ -82,3 +82,4 @@ export class PayrollComponent implements OnInit {
     }, 600);
   }
 }
+

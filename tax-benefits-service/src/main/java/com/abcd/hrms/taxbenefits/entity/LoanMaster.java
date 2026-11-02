@@ -58,3 +58,4 @@ public class LoanMaster extends BaseAuditedEntity {
     @Builder.Default
     private BigDecimal balancePrincipal = BigDecimal.ZERO;
 }
+

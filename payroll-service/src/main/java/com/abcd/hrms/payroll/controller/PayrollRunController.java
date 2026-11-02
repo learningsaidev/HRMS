@@ -57,3 +57,4 @@ public class PayrollRunController {
         return ResponseEntity.ok(ApiResponse.ok(payrollRunService.getPayslipsByRun(runId)));
     }
 }
+

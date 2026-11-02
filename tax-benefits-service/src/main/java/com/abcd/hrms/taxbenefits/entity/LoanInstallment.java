@@ -45,3 +45,4 @@ public class LoanInstallment extends BaseAuditedEntity {
     @Column(name = "payroll_run_id")
     private UUID payrollRunId;
 }
+

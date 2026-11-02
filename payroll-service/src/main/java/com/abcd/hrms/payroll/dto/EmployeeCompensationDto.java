@@ -1,9 +1,6 @@
 package com.abcd.hrms.payroll.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -13,7 +10,64 @@ import java.util.UUID;
 
 public class EmployeeCompensationDto {
 
-    @Data
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AssignComponentItem {
+        @NotNull(message = "Component ID is mandatory")
+        private UUID componentId;
+
+        @NotNull(message = "Monthly amount is mandatory")
+        private BigDecimal amountMonthly;
+
+        private BigDecimal percentageValue;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ComponentItem {
+        private UUID componentId;
+        private String componentCode;
+        private String componentName;
+        private String componentType;
+        private BigDecimal amountMonthly;
+        private BigDecimal percentageValue;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AssignRequest {
+        private UUID companyId;
+
+        @NotNull(message = "Employee ID is mandatory")
+        private UUID employeeId;
+
+        @NotNull(message = "Pay Group ID is mandatory")
+        private UUID payGroupId;
+
+        @NotNull(message = "Effective from date is mandatory")
+        private LocalDate effectiveFrom;
+
+        private LocalDate effectiveTo;
+
+        @NotNull(message = "Annual CTC is mandatory")
+        private BigDecimal ctcAnnual;
+
+        private BigDecimal grossMonthly;
+
+        private List<AssignComponentItem> components;
+    }
+
+    @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -28,47 +82,5 @@ public class EmployeeCompensationDto {
         private BigDecimal grossMonthly;
         private Boolean isActive;
         private List<ComponentItem> components;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ComponentItem {
-        private UUID componentId;
-        private String componentCode;
-        private String componentName;
-        private String componentType;
-        private BigDecimal amountMonthly;
-        private BigDecimal percentageValue;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AssignRequest {
-        private UUID companyId;
-        @NotNull(message = "Employee ID is mandatory")
-        private UUID employeeId;
-        @NotNull(message = "Pay group ID is mandatory")
-        private UUID payGroupId;
-        @NotNull(message = "Effective from date is mandatory")
-        private LocalDate effectiveFrom;
-        private LocalDate effectiveTo;
-        @NotNull(message = "CTC annual is mandatory")
-        private BigDecimal ctcAnnual;
-        private BigDecimal grossMonthly;
-        private List<AssignComponentItem> components;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AssignComponentItem {
-        @NotNull(message = "Component ID is mandatory")
-        private UUID componentId;
-        @NotNull(message = "Amount monthly is mandatory")
-        private BigDecimal amountMonthly;
-        private BigDecimal percentageValue;
     }
 }

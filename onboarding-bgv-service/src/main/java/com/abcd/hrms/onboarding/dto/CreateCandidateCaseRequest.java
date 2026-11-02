@@ -43,3 +43,4 @@ public class CreateCandidateCaseRequest {
     @NotNull(message = "Proposed joining date is mandatory")
     private LocalDate proposedJoiningDate;
 }
+

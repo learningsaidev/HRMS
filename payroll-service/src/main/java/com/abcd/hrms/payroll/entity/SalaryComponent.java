@@ -51,3 +51,4 @@ public class SalaryComponent extends BaseAuditedEntity {
     @Builder.Default
     private Boolean isActive = true;
 }
+

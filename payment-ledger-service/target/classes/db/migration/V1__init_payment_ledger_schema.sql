@@ -1,6 +1,8 @@
 -- V1__init_payment_ledger_schema.sql
 -- ABCD HRMS Enterprise Double-Entry Ledger and Payment Rails Schema
 
+CREATE SCHEMA IF NOT EXISTS abcd_payment_ledger;
+
 CREATE TABLE IF NOT EXISTS ledger_accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company_id UUID NOT NULL,
@@ -130,3 +132,4 @@ CREATE INDEX IF NOT EXISTS idx_journal_entries_date ON journal_entries(company_i
 CREATE INDEX IF NOT EXISTS idx_journal_lines_entry ON journal_lines(journal_entry_id);
 CREATE INDEX IF NOT EXISTS idx_pay_batches_status ON payment_batches(company_id, status);
 CREATE INDEX IF NOT EXISTS idx_pay_tx_batch ON payment_transactions(batch_id, status);
+

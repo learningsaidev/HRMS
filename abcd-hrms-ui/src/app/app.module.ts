@@ -50,3 +50,4 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

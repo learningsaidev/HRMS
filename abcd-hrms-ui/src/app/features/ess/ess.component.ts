@@ -95,3 +95,4 @@ export class EssComponent implements OnInit {
     alert(`Downloading encrypted payslip PDF for period ${slip.period}. Net Pay: ₹${slip.netPay.toLocaleString()}`);
   }
 }
+

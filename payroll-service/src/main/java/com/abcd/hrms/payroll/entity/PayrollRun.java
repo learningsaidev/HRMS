@@ -38,7 +38,7 @@ public class PayrollRun extends BaseAuditedEntity {
 
     @Column(name = "run_type", nullable = false, length = 30)
     @Builder.Default
-    private String runType = "REGULAR"; // REGULAR, OFF_CYCLE, BONUS, FNF
+    private String runType = "REGULAR";
 
     @Column(name = "total_employees", nullable = false)
     @Builder.Default
@@ -58,13 +58,13 @@ public class PayrollRun extends BaseAuditedEntity {
 
     @Column(name = "status", nullable = false, length = 30)
     @Builder.Default
-    private String status = "DRAFT"; // DRAFT, IN_CALCULATION, CALCULATED, REVIEWED, APPROVED, LOCKED, DISBURSED
-
-    @Column(name = "run_initiator_id")
-    private UUID runInitiatorId;
+    private String status = "DRAFT";
 
     @Column(name = "approved_by")
     private UUID approvedBy;
+
+    @Column(name = "run_initiator_id")
+    private UUID runInitiatorId;
 
     @Column(name = "locked_at")
     private Instant lockedAt;

@@ -2,6 +2,8 @@
 -- ABCD Identity & Access Service - Schema Migration V1
 -- ==============================================================================
 
+CREATE SCHEMA IF NOT EXISTS abcd_identity;
+
 CREATE TABLE IF NOT EXISTS roles (
     id UUID PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,

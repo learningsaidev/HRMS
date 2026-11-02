@@ -1,6 +1,8 @@
 -- V1__init_payroll_schema.sql
 -- ABCD HRMS Enterprise Double-Entry Payroll & Calculation Engine Schema
 
+CREATE SCHEMA IF NOT EXISTS abcd_payroll;
+
 CREATE TABLE IF NOT EXISTS pay_groups (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company_id UUID NOT NULL,
@@ -158,3 +160,4 @@ CREATE INDEX IF NOT EXISTS idx_payslips_run ON payslips(payroll_run_id);
 CREATE INDEX IF NOT EXISTS idx_payslips_emp ON payslips(employee_id);
 CREATE INDEX IF NOT EXISTS idx_calc_lines_payslip ON calculation_lines(payslip_id);
 CREATE INDEX IF NOT EXISTS idx_comp_emp ON employee_compensations(company_id, employee_id, is_active);
+

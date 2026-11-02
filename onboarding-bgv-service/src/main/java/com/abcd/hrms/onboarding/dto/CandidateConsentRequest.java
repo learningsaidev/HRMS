@@ -20,3 +20,4 @@ public class CandidateConsentRequest {
     @NotBlank(message = "Consent acknowledgment is required")
     private String consentText;
 }
+

@@ -83,3 +83,4 @@ public class TaxDeclarationDto {
         private String rejectionReason;
     }
 }
+

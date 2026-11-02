@@ -14,3 +14,4 @@ public interface PayGroupRepository extends JpaRepository<PayGroup, UUID> {
     List<PayGroup> findByCompanyIdAndIsActiveTrue(UUID companyId);
     List<PayGroup> findByLegalEntityIdAndIsActiveTrue(UUID legalEntityId);
 }
+

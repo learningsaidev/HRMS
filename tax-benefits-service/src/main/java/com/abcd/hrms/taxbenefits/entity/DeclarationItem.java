@@ -43,3 +43,4 @@ public class DeclarationItem extends BaseAuditedEntity {
     @Column(name = "rejection_reason", length = 500)
     private String rejectionReason;
 }
+

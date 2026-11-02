@@ -36,3 +36,4 @@ public class GeneralLedgerController {
         return ResponseEntity.ok(ApiResponse.ok(generalLedgerService.listJournalEntries(companyId)));
     }
 }
+

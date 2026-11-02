@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 public class SplunkHecAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
     private String url = "http://localhost:8088/services/collector/event";
-    private String token = "00000000-0000-0000-0000-000000000000";
+    private String token = "946654e2-6e83-4ae2-943a-a32ffef9305b";
     private String source = "abcd-hrms";
     private String sourcetype = "_json";
     private String index = "main";
@@ -186,3 +186,4 @@ public class SplunkHecAppender extends UnsynchronizedAppenderBase<ILoggingEvent>
     public void setIndex(String index) { this.index = index; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
 }
+

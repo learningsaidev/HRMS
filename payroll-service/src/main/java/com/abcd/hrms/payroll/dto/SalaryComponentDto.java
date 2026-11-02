@@ -49,3 +49,4 @@ public class SalaryComponentDto {
         private Integer displayOrder = 0;
     }
 }
+

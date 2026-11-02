@@ -17,3 +17,4 @@ public interface OnboardingCaseRepository extends JpaRepository<OnboardingCase, 
 
     List<OnboardingCase> findByCompanyIdAndStatus(UUID companyId, String status);
 }
+

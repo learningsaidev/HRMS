@@ -12,3 +12,4 @@ public interface ReportingMetricRepository extends JpaRepository<ReportingMetric
     List<ReportingMetric> findByCompanyIdAndMetricCategory(UUID companyId, String metricCategory);
     List<ReportingMetric> findByCompanyIdAndPeriod(UUID companyId, String period);
 }
+

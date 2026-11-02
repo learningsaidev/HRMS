@@ -77,3 +77,4 @@ export class WorkforceComponent implements OnInit {
     ];
   }
 }
+

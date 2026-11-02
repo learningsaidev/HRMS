@@ -13,3 +13,4 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
     List<PaymentTransaction> findByCompanyIdAndEmployeeIdOrderByCreatedAtDesc(UUID companyId, UUID employeeId);
     List<PaymentTransaction> findByBatchIdAndStatus(UUID batchId, String status);
 }
+

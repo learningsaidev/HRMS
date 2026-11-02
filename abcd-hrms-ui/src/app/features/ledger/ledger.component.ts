@@ -68,3 +68,4 @@ export class LedgerComponent implements OnInit {
     alert('Triggered compensating saga for failed bank transaction. Posted reversing Journal Voucher (Debit Bank 1001, Credit Salaries Payable 2001) and notified employee via Splunk log & event queue.');
   }
 }
+

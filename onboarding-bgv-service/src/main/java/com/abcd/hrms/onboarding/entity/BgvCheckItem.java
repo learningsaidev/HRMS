@@ -30,3 +30,4 @@ public class BgvCheckItem extends BaseAuditedEntity {
     @Column(name = "discrepancy_notes", length = 500)
     private String discrepancyNotes;
 }
+

@@ -1,90 +1,88 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:14-alpine
-    container_name: abcd-postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-abcd_admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-abcd_secret_2026}
-      POSTGRES_MULTIPLE_DATABASES: abcd_identity,abcd_workforce,abcd_time_leave,abcd_onboarding,abcd_payroll,abcd_tax_benefits,abcd_payment_ledger,abcd_notification_reporting
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./docker/postgres/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh:ro
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-abcd_admin}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - abcd-network
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.0
-    container_name: abcd-zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-    networks:
-      - abcd-network
-
+  # ==========================================
+  # Kafka (KRaft Mode)
+  # ==========================================
   kafka:
-    image: confluentinc/cp-kafka:7.3.0
-    container_name: abcd-kafka
-    depends_on:
-      - zookeeper
+    image: apache/kafka:latest
+    container_name: kafka
     ports:
       - "9092:9092"
-      - "29092:29092"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      # Define listeners for internal Docker network, host machine, and controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-    healthcheck:
-      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - abcd-network
-
-  redis:
-    image: redis:7-alpine
-    container_name: abcd-redis
-    ports:
-      - "6379:6379"
     volumes:
-      - redis-data:/data
+      - kafka_data:/var/lib/kafka/data
+
+  # ==========================================
+  # Kafka UI
+  # ==========================================
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8085:8080"
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local-cluster
+      # Connects using the internal Docker listener on port 29092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+
+  # ==========================================
+  # PostgreSQL Service
+  # ==========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - abcd-network
 
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: abcd-mailhog
+  # ==========================================
+  # Splunk Enterprise
+  # ==========================================
+  splunk:
+    image: splunk/splunk:latest
+    container_name: splunk
+    user: root
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
+      - SPLUNK_PASSWORD=SplunkAdmin123!
     ports:
-      - "1025:1025" # SMTP
-      - "8025:8025" # Web UI
-    networks:
-      - abcd-network
+      - "8000:8000"
+      - "8088:8088"
+      - "9997:9997"
+    volumes:
+      - splunk-etc:/opt/splunk/etc
+      - splunk-var:/opt/splunk/var
+    restart: unless-stopped
 
 volumes:
-  postgres-data:
-  redis-data:
-
-networks:
-  abcd-network:
-    driver: bridge
+  kafka_data:
+  postgres_data:
+  splunk-etc:
+  splunk-var:

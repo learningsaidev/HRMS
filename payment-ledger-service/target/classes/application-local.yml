@@ -1,4 +1,39 @@
 spring:
-  config:
-    activate:
-      on-profile: local
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:postgres_db}?sslmode=disable
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: false
+    locations: classpath:db/migration
+    schemas: abcd_payment_ledger
+    default-schema: abcd_payment_ledger
+    create-schemas: true
+  jpa:
+    properties:
+      hibernate:
+        default_schema: abcd_payment_ledger
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: payment-ledger-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+splunk:
+  hec:
+    url: ${SPLUNK_HEC_URL:http://localhost:8088/services/collector/event}
+    token: ${SPLUNK_HEC_TOKEN:946654e2-6e83-4ae2-943a-a32ffef9305b}
+    index: ${SPLUNK_INDEX:main}
+    enabled: ${SPLUNK_ENABLED:true}
+

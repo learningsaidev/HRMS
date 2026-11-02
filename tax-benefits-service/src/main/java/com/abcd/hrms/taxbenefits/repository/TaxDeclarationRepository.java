@@ -14,3 +14,4 @@ public interface TaxDeclarationRepository extends JpaRepository<TaxDeclaration, 
     List<TaxDeclaration> findByCompanyIdAndFinancialYear(UUID companyId, String financialYear);
     List<TaxDeclaration> findByEmployeeIdOrderByCreatedAtDesc(UUID employeeId);
 }
+

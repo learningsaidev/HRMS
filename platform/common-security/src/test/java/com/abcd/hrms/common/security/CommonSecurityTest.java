@@ -70,4 +70,13 @@ class CommonSecurityTest {
         assertEquals(userId.toString(), claims.get("userId"));
         assertEquals(companyId.toString(), claims.get("companyId"));
     }
+
+    @Test
+    @DisplayName("Should verify BCrypt password hash for seeded admin user")
+    void testBcryptHash() {
+        org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder encoder = 
+                new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder(12);
+        String seededHash = "$2a$12$jaB28jlNJ7YkOGLQ.k9uQ.02cnBB5m.rf4YDdU5yRNSlWazmX2f6e";
+        assertTrue(encoder.matches("Password@123", seededHash));
+    }
 }

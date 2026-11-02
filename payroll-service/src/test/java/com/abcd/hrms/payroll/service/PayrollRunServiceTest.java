@@ -106,3 +106,4 @@ class PayrollRunServiceTest {
         verify(outboxPublisherService, times(1)).enqueueEvent(any(), any(), any(), any());
     }
 }
+
