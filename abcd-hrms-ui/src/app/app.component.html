@@ -1,0 +1,13 @@
+<div class="app-layout" *ngIf="authService.currentUser$ | async as user; else loginView">
+  <app-sidebar></app-sidebar>
+  <div class="main-wrapper">
+    <app-header></app-header>
+    <main class="content-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+<ng-template #loginView>
+  <router-outlet></router-outlet>
+</ng-template>

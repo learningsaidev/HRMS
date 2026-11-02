@@ -1,0 +1,95 @@
+.app-header {
+  height: var(--header-height);
+  background: #ffffff;
+  border-bottom: 1px solid var(--neutral-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .company-name {
+    font-weight: 600;
+    color: var(--neutral-800);
+    font-size: 15px;
+    margin-right: 8px;
+  }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.role-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--neutral-600);
+
+  select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--neutral-300);
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--neutral-50);
+    cursor: pointer;
+    outline: none;
+
+    &:focus {
+      border-color: var(--accent);
+    }
+  }
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-800);
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: var(--neutral-500);
+    }
+  }
+
+  .btn-sm {
+    padding: 4px 10px;
+    font-size: 12px;
+    margin-left: 6px;
+  }
+}

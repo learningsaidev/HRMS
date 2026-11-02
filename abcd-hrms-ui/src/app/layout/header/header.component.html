@@ -1,0 +1,31 @@
+<header class="app-header" *ngIf="authService.currentUser$ | async as user">
+  <div class="header-left">
+    <div class="tenant-badge">
+      <span class="company-name">{{ user.companyName }}</span>
+      <span class="badge badge-info">Production Tenant</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="role-selector">
+      <label for="roleSwitch">Simulate Role:</label>
+      <select id="roleSwitch" [value]="user.role" (change)="switchRole($any($event.target).value)">
+        <option value="SUPER_ADMIN">👑 Super Admin</option>
+        <option value="HR_ADMIN">👥 HR Admin</option>
+        <option value="PAYROLL_OFFICER">💰 Payroll Officer</option>
+        <option value="FINANCE_CONTROLLER">🏛️ Finance Controller</option>
+        <option value="MANAGER">👔 Manager</option>
+        <option value="EMPLOYEE">👤 Employee (ESS)</option>
+      </select>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar">{{ user.fullName.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ user.fullName }}</span>
+        <span class="user-role">{{ user.role }}</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" (click)="logout()">Sign Out</button>
+    </div>
+  </div>
+</header>

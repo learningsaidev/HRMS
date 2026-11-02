@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.abcd.hrms.paymentledger.service.PaymentDisbursementServiceTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.186 s - in com.abcd.hrms.paymentledger.service.PaymentDisbursementServiceTest
